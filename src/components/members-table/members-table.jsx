@@ -82,7 +82,7 @@ const MembersTable = () => {
                 <div className='members__profile-circle'>{user.username[0]}</div>
                 <div className='members__profile-info'>
                   <span className='members__username'>{user.username}</span>
-                  <span>Количество баллов {user.points}</span>
+                  <span>Количество баллов {user.points ? user.points : 0}</span>
                   {/* {mess.id !== 'admin' && <span>Количество баллов</span>} */}
                 </div>
               </div>

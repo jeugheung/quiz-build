@@ -4,10 +4,11 @@ import './user-sign-in.css';
 import suLogo from '../../assets/suLogo.png'
 import formLogo from '../../assets/formLogo.png'
 import axios from 'axios';
+import {ThreeDots} from 'react-loader-spinner'
 
 const UserSignIn = () => {
   const [username, setUsername] = useState("");
-  const [connected, setConnected] = useState(false);
+  const [loading, setLoading] = useState(false); 
   const [roomId, setRoomId] = useState();
   const navigate = useNavigate();
   const socket = useRef();
@@ -33,12 +34,12 @@ const UserSignIn = () => {
       alert("Пожалуйста, заполните все поля ввода");
       return; // Прерываем выполнение функции
     }
-    
+    setLoading(true)
     const userId = generateId()
     socket.current = new WebSocket(socketUrl);
     socket.current.onopen = () => {
       console.log('Connected')
-      setConnected(true);
+   
       const message = {
         event: "connection",
         username,
@@ -53,10 +54,14 @@ const UserSignIn = () => {
       })
       .then(response => {
         console.log('User created:', response.data);
-        navigate(`/user-game?roomId=${roomId}&userId=${userId}`);
+        setTimeout(() => {
+          setLoading(false);
+          navigate(`/user-game?roomId=${roomId}&userId=${userId}`);
+        }, 500);
       })
       .catch(error => {
         console.error('Error creating user:', error.response.data);
+        setLoading(false);
       });
       
     };
@@ -90,7 +95,22 @@ const UserSignIn = () => {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
-        <button className='user-sign__form-btn' onClick={userConnection}>Войти</button>
+        <button className='user-sign__form-btn' onClick={userConnection} disabled={loading}>
+          {loading ? (
+              <ThreeDots
+                  visible={true}
+                  height="30"
+                  width="30"
+                  color="white"
+                  radius="9"
+                  ariaLabel="three-dots-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                />
+              ) : (
+                <span>Войти</span>
+              )}
+        </button>
       </div>
     </div>
   );

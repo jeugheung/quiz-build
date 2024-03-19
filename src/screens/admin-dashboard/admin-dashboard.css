@@ -38,7 +38,8 @@
 }
 
 .dashboard__button {
-  width: 100%;
+  width: 50%;
+  align-self: center;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -47,14 +48,15 @@
   border: 0;
   border-radius: 15px;
   height: 76px;
-  font-size: 30px;
+  font-size: 22px;
   line-height: 35px;
   font-weight: 600;
   cursor: pointer;
 }
 
 .dashboard__button-end {
-  width: 100%;
+  width: 50%;
+  align-self: center;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -63,7 +65,7 @@
   border: 0;
   border-radius: 15px;
   height: 76px;
-  font-size: 30px;
+  font-size: 22px;
   line-height: 35px;
   font-weight: 600;
   cursor: pointer;

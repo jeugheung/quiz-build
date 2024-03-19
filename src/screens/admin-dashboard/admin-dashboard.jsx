@@ -9,6 +9,7 @@ import GameHeader from '../../components/game-header/game-header';
 import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import {ThreeDots} from 'react-loader-spinner';
+import { Helmet } from 'react-helmet';
 
 const AdminDashboardPage = () => {
   const [gameQuestion, setGameQuestion] = useState(null);
@@ -114,6 +115,9 @@ const AdminDashboardPage = () => {
 
   return (
     <main className='dashboard'>
+      <Helmet>
+        <title>Панель Администратора</title>
+      </Helmet>
       <Header />
       <div className='dashboard__container'>
         <GameHeader />

@@ -1,7 +1,7 @@
 .game-header {
     display: flex;
     width: 100%;
-    min-height: 60px;
+    min-height: 80px;
     background-color: white;
     border-radius: 15px;
 }
@@ -22,4 +22,21 @@
     background-color: aquamarine;
     width: 30px;
     height: 30px;
+}
+
+.game-header__item {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.game-header__item-title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.game-header__item-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: rgba(39, 87, 161, 1);;
 }

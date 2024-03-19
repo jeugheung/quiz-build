@@ -64,6 +64,9 @@
 }
 
 .user-sign__form-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 40px;
   background-color: #2657A1;
   color: white;
