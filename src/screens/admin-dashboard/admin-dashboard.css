@@ -39,7 +39,7 @@
 
 .dashboard__button {
   width: 50%;
-  align-self: center;
+  align-self: end;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -56,7 +56,7 @@
 
 .dashboard__button-end {
   width: 50%;
-  align-self: center;
+  align-self: end;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -4,7 +4,8 @@ import Header from '../../components/header/header';
 import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { useWebSocket } from '../../shared/WebSocketContext';
-import {ThreeDots} from 'react-loader-spinner'
+import {ThreeDots, RotatingSquare} from 'react-loader-spinner'
+import { Helmet } from 'react-helmet';
 
 const UserGamePage = () => {
   const [searchParams] = useSearchParams();
@@ -34,50 +35,41 @@ const UserGamePage = () => {
     }
   };
 
-    useEffect(() => {
-      const fetchGameData = async () => {
-        try {
-          const response = await axios.get(
-            `${apiUrl}/games/${roomId}`
-          );
-          const gameData = response.data;
-          console.log("Game data:", gameData);
-          setGameData(gameData);
-          // Здесь вы можете обновить состояние вашего компонента с полученными данными
-        } catch (error) {
-          console.error("Error fetching game data:", error);
-        }
-      };
-
-      fetchGameData();
-      fetchUserData()
-
-      // В случае, если вы хотите выполнить запрос только при загрузке компонента,
-      // передайте пустой массив зависимостей в useEffect.
-    }, []);
+  const fetchGameData = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/games/${roomId}`);
+      setGameData(response.data);
+    } catch (error) {
+      console.error('Error fetching game data:', error);
+    }
+  };
 
   useEffect(() => {
     console.log("USER ID",userId)
     socket.current = new WebSocket(socketUrl);
-    if (socket) {
-      socket.current.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-        console.log('Message from USE EFFECT user game', message);
-        if (message.event == 'start_game') {
-          setGameData(message.question)
-          setAnswerSubmitted(false)
-        } else if (message.event == 'end_step') {
-          console.log(message.winner)
-          setGameData(null)
-          fetchUserData()
-        }
-      }
+    socket.current.onmessage = (event) => {
+    const message = JSON.parse(event.data);
+    console.log('Message from USE EFFECT user game', message);
+    if (message.event == 'start_game') {
+      setGameData(message.question)
+      setAnswerSubmitted(false)
+    } else if (message.event == 'end_step') {
+      console.log(message.winner)
+      setGameData(null)
+      fetchUserData()
+    }
+  
     }
 
     return () => {
       socket.current.close();
     };
     
+  }, []);
+
+  useEffect(() => {
+    fetchGameData();
+    fetchUserData();
   }, []);
 
   const handleAnswerClick = () => {
@@ -120,33 +112,56 @@ const UserGamePage = () => {
       setAnswerLoading(false)
       alert(error.message); // Выводим сообщение об ошибке пользователю
     });
-
-
-    
   }
 
   return (
     <main className='user-game'>
+      <Helmet>
+        <title>{userData ? userData.username : "User..."}</title>
+      </Helmet>
       <Header />
       <div className='user-game__container'>
 
         <div className='user-game__question-container'>
+
           <div className='user-game__user-info'>
-            <span className='user-game__room-title'>{userData ? userData.room_id : ""}</span>
-            <div className='user-game__info_block'>
-              <div className='user-game__info_item'>
-                <span className='user-game__info-title'>Имя пользователя:</span>
-                <span className='user-game__info-value'>{userData ? userData.username : ""}</span>
+            {userData ? (
+                <>
+                  <div className='user-game__top-room'>
+                    <span className='user-game__room-title'>Номер комнаты {userData ? userData.room_id : '...'}</span>
+                    <span className='user-game__room-title'>Текущий ход - {gameData ? gameData.game_step : 0}</span>
+                  </div>
+                  <div className='user-game__info_block'>
+                    <div className='user-game__info_item'>
+                      <span className='user-game__info-title'>Имя пользователя:</span>
+                      <span className='user-game__info-value'>{userData.username}</span>
+                    </div>
+                    <div className='user-game__info_item'>
+                      <span className='user-game__info-title'>ID:</span>
+                      <span className='user-game__info-value'>{userData.user_id}</span>
+                    </div>
+                    <div className='user-game__info_item'>
+                      <span className='user-game__info-title'>Ваши баллы:</span>
+                      <span className='user-game__info-value'>{userData.points}</span>
+                    </div>
+                  </div>
+                </>
+
+            ) : (
+              <div className='user-game__three-dots'>
+                <ThreeDots
+                  visible={true}
+                  height="60"
+                  width="60"
+                  color="black"
+                  radius="9"
+                  ariaLabel="three-dots-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                />
               </div>
-              <div className='user-game__info_item'>
-                <span className='user-game__info-title'>ID:</span>
-                <span className='user-game__info-value'>{userData ? userData.user_id : ""}</span>
-              </div>
-              <div className='user-game__info_item'>
-                <span className='user-game__info-title'>Ваши баллы:</span>
-                <span className='user-game__info-value'>{userData ? userData.points : ""}</span>
-              </div>
-            </div>
+            )}
+
           </div>
 
           {(gameData && gameData.game_step !== 0) ? (
@@ -182,6 +197,15 @@ const UserGamePage = () => {
           ) : (
             <div className='user-game__no-question'>
               <span>Ожидайте ответа администратора</span>
+              <RotatingSquare
+                visible={true}
+                height="35"
+                width="35"
+                color="white"
+                ariaLabel="rotating-square-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+              />
             </div>
           )}
         </div>
