@@ -21,7 +21,7 @@ const AdminSignIn = () => {
 
   const handleSignIn = () => {
     // Проверка на соответствие логина и пароля
-    if (login === 'admin' && password === 'admin') {
+    if (login === 'admin' && password === 'qwe123') {
       navigate('/admin-start');
     } else {
       alert('Неправильный логин или пароль');

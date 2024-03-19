@@ -4,9 +4,12 @@ import Header from '../../components/header/header';
 // import { useWebSocket } from '../../shared/WebSocketContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import {FidgetSpinner, Puff} from 'react-loader-spinner'
+import { Helmet } from 'react-helmet';
 
 const AdminStartPage = () => {
-  const socket = useRef();
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_API
   
@@ -20,6 +23,7 @@ const AdminStartPage = () => {
   }
   
   const handleStartGame = async  () => {
+    setLoading(true);
     const roomId = generateRandomDigits(); // Ваш ID комнаты
     const gameData = {
       current_question_ru: '',
@@ -36,22 +40,52 @@ const AdminStartPage = () => {
         gameData: gameData
       });
       console.log('Game data saved:', response.data);
-      navigate(`/admin-dashboard?roomId=${roomId}`)
+      setTimeout(() => {
+        setLoading(false);
+        navigate(`/admin-dashboard?roomId=${roomId}`);
+      }, 1000);
     } catch (error) {
       console.error('Error saving or updating game data:', error);
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
     }
   }
 
-
-
   return (
     <main className='admin-start'>
-      <Header />
+      <Helmet>
+        <title>Создать игру</title>
+      </Helmet>
       <div className='admin-start__container'>
         <div className='admin-start__instruction-block'>
-          <span>Создайте игру</span>
+          <span className='admin-start__title'>Создайте игру</span>
 
-          <button className='admin-start__create-game' onClick={handleStartGame}>Создать Игру</button>
+          {!loading ? (
+            <FidgetSpinner
+              visible={true}
+              height="100"
+              width="100"
+              ariaLabel="fidget-spinner-loading"
+              wrapperStyle={{}}
+              wrapperClass="fidget-spinner-wrapper"
+            />
+          ) : (
+            <Puff
+              visible={true}
+              height="100"
+              width="100"
+              color="#4fa94d"
+              ariaLabel="puff-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+            />
+          )}
+
+          <button className='admin-start__create-game' onClick={handleStartGame} disabled={loading}>
+            {loading ? 'Создание игры...' : 'Создать Игру'}
+          </button>
         </div>
         
       </div>

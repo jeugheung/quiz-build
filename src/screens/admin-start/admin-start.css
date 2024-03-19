@@ -12,6 +12,11 @@
   height: 100vh;
 }
 
+.admin-start__title {
+  font-size: 22px;
+  font-weight: 600;
+}
+
 .admin-start__instruction-block {
   display: flex;
   flex-direction: column;
@@ -39,4 +44,9 @@
   font-weight: 600;
   font-size: 15px;
   line-height: 30px;
+}
+
+.admin-start__create-game:hover {
+  /* opacity: 0.8; */
+  background-color: green;
 }
