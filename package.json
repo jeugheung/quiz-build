@@ -1,8 +1,8 @@
 {
   "name": "quiz-front",
   "version": "0.1.0",
-  "private": true,
-  "homepage": "./",
+  "private": false,
+  "homepage": "https://jeugheung.github.io/quiz-build",
   "dependencies": {
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
@@ -12,6 +12,7 @@
     "gh-pages": "^6.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-helmet": "^6.1.0",
     "react-loader-spinner": "^6.1.6",
     "react-router-dom": "^6.22.2",
     "react-scripts": "5.0.1",
@@ -20,6 +21,8 @@
   "scripts": {
     "start": "PORT=4000 react-scripts start",
     "build": "react-scripts build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

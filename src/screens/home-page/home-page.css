@@ -2,15 +2,16 @@
   display: flex;
   align-items: center;
   width: 100%;
-  height: 100vh;
   position: relative;
+  height: 100vh;
   padding-left: 50px;
 }
 
 .home__main-bg {
   position: absolute;
   right: 0;
-  object-fit: contain;
-  max-height: 800px;
-
+  object-fit: cover;
+  height: 100vh;
+  top: 0; /* Для выравнивания изображения по верхнему краю */
+  max-width: 80%; /* Адаптивная ширина */
 }

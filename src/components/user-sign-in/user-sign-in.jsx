@@ -27,12 +27,13 @@ const UserSignIn = () => {
     return id;
   }
 
-  const userAdmin = () => {
-    navigate('/admin');
-  }
-
-
   const userConnection = () => {
+    if (!roomId || !username) {
+      // Проверяем, пустые ли поля ввода и выводим alert, если хотя бы одно из них пустое
+      alert("Пожалуйста, заполните все поля ввода");
+      return; // Прерываем выполнение функции
+    }
+    
     const userId = generateId()
     socket.current = new WebSocket(socketUrl);
     socket.current.onopen = () => {
@@ -90,7 +91,6 @@ const UserSignIn = () => {
           onChange={(e) => setUsername(e.target.value)}
         />
         <button className='user-sign__form-btn' onClick={userConnection}>Войти</button>
-        <button className='user-sign__form-btn-admin' onClick={userAdmin}>Администратор</button>
       </div>
     </div>
   );
