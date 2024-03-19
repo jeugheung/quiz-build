@@ -1,37 +1,37 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+// import React, { createContext, useContext, useEffect, useState } from 'react';
 
-const WebSocketContext = createContext(null);
+// const WebSocketContext = createContext(null);
 
 
-export const WebSocketProvider = ({ children }) => {
-  const [socket, setSocket] = useState(null);
-  const socketUrl = process.env.REACT_APP_SOCKET
+// export const WebSocketProvider = ({ children }) => {
+//   const [socket, setSocket] = useState(null);
+//   const socketUrl = process.env.REACT_APP_SOCKET
 
-  useEffect(() => {
-    const newSocket = new WebSocket(socketUrl);
+//   useEffect(() => {
+//     const newSocket = new WebSocket(socketUrl);
 
-    newSocket.onopen = () => {
-      console.log('WebSocket connected');
-    };
+//     newSocket.onopen = () => {
+//       console.log('WebSocket connected');
+//     };
 
-    newSocket.onclose = () => {
-      console.log('WebSocket disconnected');
-    };
+//     newSocket.onclose = () => {
+//       console.log('WebSocket disconnected');
+//     };
 
-    setSocket(newSocket);
+//     setSocket(newSocket);
 
-    return () => {
-      newSocket.close();
-    };
-  }, []);
+//     return () => {
+//       newSocket.close();
+//     };
+//   }, []);
 
-  return (
-    <WebSocketContext.Provider value={socket}>
-      {children}
-    </WebSocketContext.Provider>
-  );
-}
+//   return (
+//     <WebSocketContext.Provider value={socket}>
+//       {children}
+//     </WebSocketContext.Provider>
+//   );
+// }
 
-export const useWebSocket = () => {
-  return useContext(WebSocketContext);
-};
+// export const useWebSocket = () => {
+//   return useContext(WebSocketContext);
+// };

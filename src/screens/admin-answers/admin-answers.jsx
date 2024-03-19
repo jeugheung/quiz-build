@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 // import './admin-dashboard.css'
 import './admin-answers.css'
 import Header from '../../components/header/header';
@@ -11,7 +11,7 @@ const AdminAnswersPage = () => {
   const navigate = useNavigate();
 
   const [question, setQuestion] = useState();
-  const [answers, setAnswers] = useState()
+  const [answers, setAnswers] = useState([])
 
   const [winner, setWinner] = useState()
   const [searchParams] = useSearchParams();
@@ -20,8 +20,9 @@ const AdminAnswersPage = () => {
   const [gameData, setGameData] = useState();
   const [loading, setLoading] = useState(true)
   const [incorrectLoading, setIncorrectLoading] = useState(false)
+  const [endGameLoader, setEndGameLoader] = useState(false)
 
-  const socket = useWebSocket();
+  const socket = useRef();
   const apiUrl = process.env.REACT_APP_API
   const socketUrl = process.env.REACT_APP_SOCKET
 
@@ -32,15 +33,31 @@ const AdminAnswersPage = () => {
     setWinner(username)
   };
 
+  const fetchGameData = async () => {
+    try {
+        const response = await axios.get(`${apiUrl}/games/${roomId}`);
+        const gameData = response.data;
+        console.log('Game data:', gameData);
+        setGameData(gameData)
+        setAnswers(gameData.answers)
+
+        setQuestion(gameData)
+        setTimeout(() => {
+          setLoading(false);
+        }, 500)
+        // Здесь вы можете обновить состояние вашего компонента с полученными данными
+    } catch (error) {
+        console.error('Error fetching game data:', error);
+    }
+};
+
   const toggleAnswerStatus = async (questionId) => {
-    setIncorrectLoading(true)
     try {
       const response = await fetch(`${apiUrl}/question/${questionId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
-        // В теле запроса отправляем только идентификатор вопроса
         body: JSON.stringify({ questionId })
       });
   
@@ -49,16 +66,18 @@ const AdminAnswersPage = () => {
       }
   
       const data = await response.json();
-      console.log('Answer status toggled successfully:', data);
       setIncorrectLoading(false)
+      setEndGameLoader(false)
       navigate(`/admin-dashboard?roomId=${roomId}`)
     } catch (error) {
       console.error('Error toggling answer status:', error);
       setIncorrectLoading(false)
+      setEndGameLoader(false)
     }
   };
 
   const handleEndStep = () => {
+    setEndGameLoader(true)
     const requestBody = {
       user_id: selectedItem, // Замените на реальный user_id
       points: gameData.points // Количество баллов для добавления
@@ -84,77 +103,48 @@ const AdminAnswersPage = () => {
         winner: winner
       };
       console.log('messagee',message)
-      socket.send(JSON.stringify(message));
+      socket.current.send(JSON.stringify(message));
       toggleAnswerStatus(gameData.question_id)
- 
+      
       
     })
     .catch(error => {
       console.error('Ошибка запроса:', error.message);
     });
-
-  
-
-    console.log(requestBody)
-
   }
 
 
   useEffect(() => {
-    const fetchGameData = async () => {
-        try {
-            const response = await axios.get(`${apiUrl}/games/${roomId}`);
-            const gameData = response.data;
-            console.log('Game data:', gameData);
-            setGameData(gameData)
-            setAnswers(gameData.answers)
-
-            setQuestion(gameData)
-            setTimeout(() => {
-              setLoading(false);
-            }, 500)
-            // Здесь вы можете обновить состояние вашего компонента с полученными данными
-        } catch (error) {
-            console.error('Error fetching game data:', error);
-        }
-    };
-
     fetchGameData();
-
-    // В случае, если вы хотите выполнить запрос только при загрузке компонента,
-    // передайте пустой массив зависимостей в useEffect.
-}, []);
+  }, []);
 
   useEffect(() => {
-    
-    if (socket) {
-      
-      socket.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-        console.log('from dash', message)
-        if (message.event === "user_answer") {
-          console.log(',es')
-          setAnswers(prevUsers => [...prevUsers, message.user]);
-        }
-        // } else if (message.event === 'user_answer') {
-        //   console.log('ANSWER ---- ', message.user.username)
-        //   setAnswers(message.user.username)
-        //   console.log('SETTING ANSWER---', answers)
-        //   setTopList(prevMessages => [...prevMessages, message]);
-        // }
-        
-        // Обработка входящего сообщения
-      };
+    socket.current = new WebSocket(socketUrl);
+    socket.current.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      console.log('from dash', message)
+      if (message.event === "user_answer") {
+        fetchGameData()
+      }
+    };
+
+    return () => {
+      if (socket.current.readyState === 1) { // <-- This is important
+          socket.current.close();
+      }
     }
-  }, [socket]);
+      
+      
+  }, []);
 
   const handleAllIncorrect = () => {
+    setIncorrectLoading(true)
     const message = {
       event: "end_step",
       winner: winner
     };
     console.log('messagee',message)
-    socket.send(JSON.stringify(message));
+    socket.current.send(JSON.stringify(message));
     toggleAnswerStatus(gameData.question_id)
   }
 
@@ -193,7 +183,22 @@ const AdminAnswersPage = () => {
                 <span className='user-game__task'>{question.current_question_ru}</span>
               </div>
               {selectedItem ? (
-                <div className='admin-answers__end-step' onClick={handleEndStep}>Завершить ход</div>
+                <div className='admin-answers__end-step' onClick={handleEndStep}>
+                  {endGameLoader ? (
+                    <ThreeDots
+                      visible={true}
+                      height="40"
+                      width="40"
+                      color="white"
+                      radius="9"
+                      ariaLabel="three-dots-loading"
+                      wrapperStyle={{}}
+                      wrapperClass=""
+                    />
+                  ) : (
+                    <span>Завершить ход</span>
+                  )}
+                </div>
               ) : (
                 <div className='admin-answers__reply-btn'>Ожидайте ответа участников</div>
               )}

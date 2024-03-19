@@ -3,7 +3,6 @@ import './user-game-page.css'
 import Header from '../../components/header/header';
 import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import { useWebSocket } from '../../shared/WebSocketContext';
 import {ThreeDots, RotatingSquare} from 'react-loader-spinner'
 import { Helmet } from 'react-helmet';
 
@@ -12,8 +11,6 @@ const UserGamePage = () => {
   const userId = searchParams.get('userId');
   const roomId = searchParams.get('roomId');
 
-  const [question, setQuestion] = useState();
-  // const [currentUser, setCurrentUser] = useState()
   const [answerSubmitted, setAnswerSubmitted] = useState(false);
   const socket = useRef();
   const [userData, setUserData] = useState(null);
@@ -47,23 +44,32 @@ const UserGamePage = () => {
   useEffect(() => {
     console.log("USER ID",userId)
     socket.current = new WebSocket(socketUrl);
+    // socket.current.onclose = () => {
+    //   console.log("WebSocket connection closed");
+    //   // Вызываем функцию fetchGameData при потере соединения
+    //   fetchGameData();
+    //   fetchUserData();
+    // };
     socket.current.onmessage = (event) => {
-    const message = JSON.parse(event.data);
-    console.log('Message from USE EFFECT user game', message);
-    if (message.event == 'start_game') {
-      setGameData(message.question)
-      setAnswerSubmitted(false)
-    } else if (message.event == 'end_step') {
-      console.log(message.winner)
-      setGameData(null)
-      fetchUserData()
-    }
+      const message = JSON.parse(event.data);
+      console.log('Message from USE EFFECT user game', message);
+      if (message.event == 'start_game') {
+        setGameData(message.question)
+        setAnswerSubmitted(false)
+      } else if (message.event == 'end_step') {
+        console.log(message.winner)
+        setGameData(null)
+        fetchGameData();
+        fetchUserData();
+      }
   
     }
 
     return () => {
-      socket.current.close();
-    };
+      if (socket.current.readyState === 1) { // <-- This is important
+          socket.current.close();
+      }
+    }
     
   }, []);
 

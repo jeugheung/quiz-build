@@ -1,9 +1,8 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import './admin-dashboard.css'
 import Header from '../../components/header/header';
 import MembersTable from '../../components/members-table/members-table';
 import QuestionTable from '../../components/question-table/question-table';
-import { useWebSocket } from '../../shared/WebSocketContext';
 import { useNavigate } from 'react-router-dom';
 import GameHeader from '../../components/game-header/game-header';
 import { useSearchParams } from 'react-router-dom';
@@ -13,7 +12,7 @@ import { Helmet } from 'react-helmet';
 
 const AdminDashboardPage = () => {
   const [gameQuestion, setGameQuestion] = useState(null);
-  const socket = useWebSocket();
+  const socket = useRef();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const roomId = searchParams.get('roomId')
@@ -24,6 +23,7 @@ const AdminDashboardPage = () => {
   const socketUrl = process.env.REACT_APP_SOCKET
 
   useEffect(() => {
+    socket.current = new WebSocket(socketUrl);
     const fetchGameData = async () => {
         try {
             const response = await axios.get(`${apiUrl}/games/${roomId}`);
@@ -47,15 +47,16 @@ const AdminDashboardPage = () => {
       alert('Пожалуйста, выберите вопрос');
       return;
     }
+  
     setLoading(true);
-    console.log('Selected question:', gameQuestion);
-    if (socket && gameQuestion) {
+    // console.log('Selected question:', gameQuestion);
+    if (gameQuestion) {
       const message = {
         event: "start_game",
         question: gameQuestion
       };
       console.log('messagee',message)
-      socket.send(JSON.stringify(message));
+      socket.current.send(JSON.stringify(message));
       console.log(game)
       const gameData = {
         current_question_ru: gameQuestion.question_ru,
@@ -103,6 +104,12 @@ const AdminDashboardPage = () => {
       } catch (error) {
         console.error('Error saving game data:', error);
         // Обработка ошибки сохранения данных
+      }
+    }
+
+    return () => {
+      if (socket.current.readyState === 1) { // <-- This is important
+          socket.current.close();
       }
     }
   };

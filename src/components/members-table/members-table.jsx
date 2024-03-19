@@ -45,10 +45,6 @@ const MembersTable = () => {
           setUsers(prevUsers => [...prevUsers, message]);
         }
       }
-      // setUsers(prevUsers => [...prevUsers, message]);
-      // if (!users.some(user => user.id === message.id)) {
-      //   setUsers(prevUsers => [...prevUsers, message]);
-      // }
     };
   
     // Возвращаем функцию очистки, чтобы закрыть соединение при размонтировании компонента

@@ -12,7 +12,7 @@ import WinnerPage from './screens/winners-page/winners-page';
 const App = () => {
   return (
     <HashRouter>
-      <WebSocketProvider>
+      {/* <WebSocketProvider> */}
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="admin" element={<AdminPage />} />
@@ -22,7 +22,7 @@ const App = () => {
           <Route path='admin-answers' element={<AdminAnswersPage />} />
           <Route path='winner-page' element={<WinnerPage />}/>
         </Routes>
-      </WebSocketProvider>
+      {/* </WebSocketProvider> */}
     </HashRouter>
   );
 };
