@@ -1,0 +1,25 @@
+.game-header {
+    display: flex;
+    width: 100%;
+    min-height: 60px;
+    background-color: white;
+    border-radius: 15px;
+}
+
+.game-header__container {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    padding-left: 20px;
+    padding-right: 20px;
+    justify-content: space-between;
+}
+
+.game-header__step-cont {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: aquamarine;
+    width: 30px;
+    height: 30px;
+}

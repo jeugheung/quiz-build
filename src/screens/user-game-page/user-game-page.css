@@ -1,0 +1,173 @@
+.user-game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.user-game__container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  max-width: 1300px;
+  align-items: center;
+  padding-top: 50px;
+  padding-bottom: 50px;
+  gap: 50px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.user-game__question-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 1100px;
+  width: 100%;
+  min-height: 100vh;
+  /* background-color: white; */
+  border-radius: 15px;
+  padding: 20px;
+}
+
+.user-game__question {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background-color: white;
+  /* max-width: 900px; */
+  border: 2px solid rgba(39, 87, 161, 1);
+  border-radius: 30px;
+  padding: 40px;
+  gap: 30px
+  ;
+}
+
+.user-game__points {
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 24px;
+  color: rgba(30, 30, 30, 1);
+}
+
+.user-game__question-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.user-game__category {
+  color: rgba(39, 87, 161, 1);
+  font-weight: 500;
+  font-size: 25px;
+  line-height: 30px;
+  margin-bottom: 20px;
+}
+
+.user-game__task {
+  font-size: 18px;
+  line-height: 30px;
+  color: black;
+  font-weight: 500;
+  text-align: center;
+}
+
+.user-game__reply-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 70px;
+  background-color: rgba(63, 161, 39, 1);
+  color: white;
+  border: 0;
+  border-radius: 15px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 30px;
+}
+
+.user-game__reply-btn__submitted {
+  width: 100%;
+  height: 70px;
+  background-color: rgba(190, 190, 190, 1);
+  color: white;
+  border: 0;
+  border-radius: 15px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 30px;
+}
+
+.user-game__no-question {
+  display: flex;
+  width: 50%;
+  height: 100px;
+  background-color: rgba(190, 190, 190, 1);
+  color: white;
+  align-items: center;
+  justify-content: center;
+  border-radius: 30px;
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 35px;
+}
+
+.user-game__user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  min-height: 100px;
+  margin-bottom: 20px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.user-game__room-title {
+  font-size: 30px;
+  font-weight: 600;
+  color: #2657A1;
+}
+
+.user-game__info_block {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 50px;
+}
+
+.user-game__info_item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 180px;
+  width: 100%;
+}
+
+.user-game__info-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.user-game__divider {
+  width: 100%;
+  height: 2px;
+  background-color: #2657A1;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.user-game__divider-line {
+  display: flex;
+  width: 100%;
+  height: 1px;
+  background-color: gray;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}

@@ -1,0 +1,57 @@
+.user-sign__form {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  width: 100%;
+  max-width: 450px;
+  min-height: 500px;
+  background-color: white;
+  border-radius: 15px;
+  padding: 30px;
+  z-index: 10000;
+}
+
+.user-sign__top-logo {
+  width: 260px;
+  height: 58px;
+}
+
+.user-sign__middle-logo {
+  width: 350px;
+  height: 170px;
+}
+
+.user-sign__form-block {
+  display: flex;
+  flex-direction: column; 
+  gap: 20px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.user-sign__form-input {
+  height: 40px;
+  padding-left: 20px;
+  cursor: pointer;
+}
+
+.user-sign__form-btn {
+  height: 40px;
+  background-color: #2657A1;
+  color: white;
+  border: 0;
+  cursor: pointer;
+}
+
+.user-sign__form-btn:hover {
+  opacity: 0.8;
+}
+
+.user-sign__form-btn-admin {
+  height: 20px;
+  background-color: transparent;
+  color: gray;
+  border: 0;
+  cursor: pointer;
+}

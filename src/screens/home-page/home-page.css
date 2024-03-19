@@ -1,0 +1,16 @@
+.home {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  padding-left: 50px;
+}
+
+.home__main-bg {
+  position: absolute;
+  right: 0;
+  object-fit: contain;
+  max-height: 800px;
+
+}

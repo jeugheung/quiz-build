@@ -1,0 +1,84 @@
+.question-table {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.question-table__content-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+.question-table__main-title {
+  font-size: 26px;
+  font-weight: 600;
+  color: rgba(39, 87, 161, 1);
+  line-height: 35px;
+}
+
+.question-table__question-stack {
+  display: flex;
+  gap: 10px;
+}
+
+.question-table__question-item {
+  display: flex;
+  width: 100px;
+  height: 90px;
+  border-radius: 20px;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(39, 87, 161, 1);
+  cursor: pointer;
+
+  color: white;
+}
+
+.question-table__question-item:hover {
+  background: rgba(88, 152, 250, 1);
+}
+
+.question-table__button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(63, 161, 39, 1);
+  color: white;
+  border: 0;
+  border-radius: 15px;
+  height: 76px;
+  font-size: 30px;
+  line-height: 35px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.question-table__question-item.selected {
+  background-color: rgba(88, 152, 250, 1);
+}
+
+.loader-container {
+  display: flex;
+  background-color: #F5F5F5;
+  width: 100%;
+  min-height: 500px;
+  align-items: center;
+  justify-content: center;
+}
+
+.question-table__pointTitle {
+  font-weight: 700;
+  font-size: 17px;
+}
+
+.question-table__question-item.answered {
+  background-color: gray;
+  cursor: not-allowed;
+  /* Стили для элемента, на который уже был дан ответ */
+}
