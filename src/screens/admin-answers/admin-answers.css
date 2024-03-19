@@ -97,14 +97,15 @@
 }
 
 .user-game__answers-title {
-  font-size: 19px;
-
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  line-height: 35px;
 }
 
 .user-game__top-container {
   display: flex;
   flex-direction: column;
-  background-color: antiquewhite;
   width: 70%;
   gap: 20px
   ;
@@ -138,6 +139,10 @@
   border: 0;
   cursor: pointer;
   background-color: rgba(39, 87, 161, 1);;
+}
+
+.user-game__correct-answer:hover {
+  opacity: 0.8;
 }
 
 .user-game__top-btns {
@@ -197,7 +202,19 @@
 
 .all-incorrect {
   display: flex;
-  background-color: red;
+  align-self: end;
+  cursor: pointer;
+  color: white;
   width: 140px;
   min-height: 60px;
+  border: 0;
+  border-radius: 15px;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(212, 31, 31, 1);
+  margin-top: 15px;
+}
+
+.all-incorrect:hover {
+  background-color: red;
 }

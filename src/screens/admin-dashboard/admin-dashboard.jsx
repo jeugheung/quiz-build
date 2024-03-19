@@ -43,6 +43,10 @@ const AdminDashboardPage = () => {
   }, []);
 
   const handleStartGame = () => {
+    if (!gameQuestion) {
+      alert('Пожалуйста, выберите вопрос');
+      return;
+    }
     setLoading(true);
     console.log('Selected question:', gameQuestion);
     if (socket && gameQuestion) {
@@ -129,8 +133,8 @@ const AdminDashboardPage = () => {
               {loading ? (
                 <ThreeDots
                   visible={true}
-                  height="80"
-                  width="80"
+                  height="60"
+                  width="60"
                   color="white"
                   radius="9"
                   ariaLabel="three-dots-loading"

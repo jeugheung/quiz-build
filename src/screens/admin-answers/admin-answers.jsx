@@ -5,20 +5,21 @@ import Header from '../../components/header/header';
 import { useWebSocket } from '../../shared/WebSocketContext';
 import axios from 'axios';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import {ThreeCircles} from 'react-loader-spinner'
+import {ThreeCircles, ThreeDots} from 'react-loader-spinner'
 
 const AdminAnswersPage = () => {
   const navigate = useNavigate();
 
   const [question, setQuestion] = useState();
   const [answers, setAnswers] = useState()
-  // const [topList, setTopList] = useState([])
+
   const [winner, setWinner] = useState()
   const [searchParams] = useSearchParams();
   const roomId = searchParams.get('roomId');
   const [selectedItem, setSelectedItem] = useState(null);
   const [gameData, setGameData] = useState();
   const [loading, setLoading] = useState(true)
+  const [incorrectLoading, setIncorrectLoading] = useState(false)
 
   const socket = useWebSocket();
   const apiUrl = process.env.REACT_APP_API
@@ -32,6 +33,7 @@ const AdminAnswersPage = () => {
   };
 
   const toggleAnswerStatus = async (questionId) => {
+    setIncorrectLoading(true)
     try {
       const response = await fetch(`${apiUrl}/question/${questionId}`, {
         method: 'PUT',
@@ -48,9 +50,11 @@ const AdminAnswersPage = () => {
   
       const data = await response.json();
       console.log('Answer status toggled successfully:', data);
+      setIncorrectLoading(false)
       navigate(`/admin-dashboard?roomId=${roomId}`)
     } catch (error) {
       console.error('Error toggling answer status:', error);
+      setIncorrectLoading(false)
     }
   };
 
@@ -144,6 +148,16 @@ const AdminAnswersPage = () => {
     }
   }, [socket]);
 
+  const handleAllIncorrect = () => {
+    const message = {
+      event: "end_step",
+      winner: winner
+    };
+    console.log('messagee',message)
+    socket.send(JSON.stringify(message));
+    toggleAnswerStatus(gameData.question_id)
+  }
+
   if (loading) {
     return (
       <div className='answers-loader-container'>
@@ -166,9 +180,9 @@ const AdminAnswersPage = () => {
       <div className='user-game__container'>
 
         <div className='user-game__question-container'>
-          <div>
-            <span>Номер комнаты {roomId}</span>
-            <span>Номер хода {gameData ? gameData.game_step : ''}</span>
+          <div className='user-game__top-room'>
+              <span className='user-game__room-title'>Номер комнаты {roomId}</span>
+              <span className='user-game__room-title'>Текущий ход - {gameData ? gameData.game_step : 0}</span>
           </div>
           {question ? (
             <div className='user-game__question'>
@@ -208,11 +222,25 @@ const AdminAnswersPage = () => {
                   </div>
                 ))
               )}
-              {answers && (
-                <div>
-                  <button className='all-incorrect'>Все неправильно</button>
+              {answers.length > 0 && (
+                <button className='all-incorrect' onClick={() => handleAllIncorrect()}>
+                 {incorrectLoading ? (
+                    <ThreeDots
+                      visible={true}
+                      height="40"
+                      width="40"
+                      color="white"
+                      radius="9"
+                      ariaLabel="three-dots-loading"
+                      wrapperStyle={{}}
+                      wrapperClass=""
+                    />
+                  ) : (
+                    <span>Все неправильно</span>
+                  )}
+                </button>
 
-                </div>
+    
               )}
             </div>
 

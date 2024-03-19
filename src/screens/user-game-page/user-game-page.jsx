@@ -176,7 +176,7 @@ const UserGamePage = () => {
               {answerSubmitted ? (
                 <button className='user-game__reply-btn__submitted' disabled>Вы ответили</button>
               ) : (
-                <button className='user-game__reply-btn' onClick={() => handleAnswerClick()}>
+                <button className='user-game__reply-btn' onClick={() => handleAnswerClick()} disabled={answerLoading}>
                   {answerLoading ? (
                     <ThreeDots
                       visible={true}
