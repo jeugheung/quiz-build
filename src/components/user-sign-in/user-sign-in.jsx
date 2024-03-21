@@ -5,6 +5,7 @@ import suLogo from '../../assets/suLogo.png'
 import formLogo from '../../assets/formLogo.png'
 import axios from 'axios';
 import {ThreeDots} from 'react-loader-spinner'
+import { io } from 'socket.io-client';
 
 const UserSignIn = () => {
   const [username, setUsername] = useState("");
@@ -28,51 +29,50 @@ const UserSignIn = () => {
     return id;
   }
 
-  const userConnection = () => {
-    if (!roomId || !username) {
-      // Проверяем, пустые ли поля ввода и выводим alert, если хотя бы одно из них пустое
-      alert("Пожалуйста, заполните все поля ввода");
-      return; // Прерываем выполнение функции
-    }
-    setLoading(true)
-    const userId = generateId()
-    socket.current = new WebSocket(socketUrl);
-    socket.current.onopen = () => {
-      console.log('Connected')
-   
-      const message = {
-        event: "connection",
-        username,
-        id: userId,
-      };
-      socket.current.send(JSON.stringify(message));
-      axios.post(`${apiUrl}/users`, {
-        username,
-        points: 0,
-        room_id: roomId,
-        id: userId,
-      })
-      .then(response => {
-        console.log('User created:', response.data);
-        setTimeout(() => {
-          setLoading(false);
-          navigate(`/user-game?roomId=${roomId}&userId=${userId}`);
-        }, 500);
-      })
-      .catch(error => {
-        console.error('Error creating user:', error.response.data);
-        setLoading(false);
-      });
-      
-    };
-    socket.current.onmessage = (event) => {
-    };
-
-    socket.current.onerror = () => {
-      console.log("Socket произошла ошибка");
-    };
-
+  
+const userConnection = () => {
+  if (!roomId || !username) {
+    // Проверяем, пустые ли поля ввода и выводим alert, если хотя бы одно из них пустое
+    alert("Пожалуйста, заполните все поля ввода");
+    return; // Прерываем выполнение функции
   }
+  setLoading(true);
+  const userId = generateId();
+  const socket = io(socketUrl);
+
+  socket.on('connect', () => {
+    console.log('Connected');
+
+    const message = {
+      event: "connection",
+      username,
+      id: userId,
+    };
+    socket.emit('message', JSON.stringify(message)); // Отправляем сообщение на сервер
+
+    axios.post(`${apiUrl}/users`, {
+      username,
+      points: 0,
+      room_id: roomId,
+      id: userId,
+    })
+    .then(response => {
+      console.log('User created:', response.data);
+      setTimeout(() => {
+        setLoading(false);
+        navigate(`/user-game?roomId=${roomId}&userId=${userId}`);
+      }, 500);
+    })
+    .catch(error => {
+      console.error('Error creating user:', error.response.data);
+      setLoading(false);
+    });
+  });
+
+  socket.on('error', () => {
+    console.log("Socket произошла ошибка");
+  });
+};
 
   
 

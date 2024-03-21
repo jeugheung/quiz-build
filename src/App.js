@@ -8,11 +8,18 @@ import UserGamePage from './screens/user-game-page/user-game-page';
 import AdminAnswersPage from './screens/admin-answers/admin-answers';
 import AdminStartPage from './screens/admin-start/admin-start';
 import WinnerPage from './screens/winners-page/winners-page';
+import { ReloadProvider } from './shared/ReloadContext';
 
 const App = () => {
+
+  const reloadApp = () => {
+    console.log('APP RELOADED')
+    window.location.reload(); // Перезагрузка всего приложения
+  };
+  
   return (
     <HashRouter>
-      {/* <WebSocketProvider> */}
+      <ReloadProvider reloadApp={reloadApp}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="admin" element={<AdminPage />} />
@@ -22,7 +29,7 @@ const App = () => {
           <Route path='admin-answers' element={<AdminAnswersPage />} />
           <Route path='winner-page' element={<WinnerPage />}/>
         </Routes>
-      {/* </WebSocketProvider> */}
+      </ReloadProvider>
     </HashRouter>
   );
 };

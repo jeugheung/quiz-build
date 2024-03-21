@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import {ThreeDots, RotatingSquare} from 'react-loader-spinner'
 import { Helmet } from 'react-helmet';
+import io from 'socket.io-client';
 
 const UserGamePage = () => {
   const [searchParams] = useSearchParams();
@@ -12,7 +13,7 @@ const UserGamePage = () => {
   const roomId = searchParams.get('roomId');
 
   const [answerSubmitted, setAnswerSubmitted] = useState(false);
-  const socket = useRef();
+  const socketRef = useRef();
   const [userData, setUserData] = useState(null);
   const [gameData, setGameData] = useState()
 
@@ -20,12 +21,13 @@ const UserGamePage = () => {
   const apiUrl = process.env.REACT_APP_API
   const socketUrl = process.env.REACT_APP_SOCKET
 
+  // WebSocket 
+  const [connected, setConnected] = useState(false)
+
+
   const fetchUserData = async () => {
     try {
-      // Выполняем GET-запрос для получения информации о пользователе по его id
       const response = await axios.get(`${apiUrl}/user/${userId}`);
-      console.log('USER DATA BY ID', response.data)
-      // Устанавливаем полученные данные в state
       setUserData(response.data);
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -42,42 +44,43 @@ const UserGamePage = () => {
   };
 
   useEffect(() => {
-    console.log("USER ID",userId)
-    socket.current = new WebSocket(socketUrl);
-    // socket.current.onclose = () => {
-    //   console.log("WebSocket connection closed");
-    //   // Вызываем функцию fetchGameData при потере соединения
-    //   fetchGameData();
-    //   fetchUserData();
-    // };
-    socket.current.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      console.log('Message from USE EFFECT user game', message);
-      if (message.event == 'start_game') {
-        setGameData(message.question)
-        setAnswerSubmitted(false)
-      } else if (message.event == 'end_step') {
-        console.log(message.winner)
-        setGameData(null)
+    socketRef.current = io(socketUrl);
+
+    socketRef.current.on('connect', () => {
+      setConnected(true);
+      console.log('Подключение установлено');
+    });
+
+    socketRef.current.on('message', (message) => {
+      const parsedMessage = JSON.parse(message);
+      console.log('Message from USE EFFECT user game', parsedMessage);
+      if (parsedMessage.event === 'start_game') {
+        console.log(parsedMessage);
+        window.location.reload();
+      } else if (parsedMessage.event === 'end_step') {
+        console.log(parsedMessage.winner);
+        setGameData(null);
         fetchGameData();
         fetchUserData();
       }
-  
-    }
+    });
 
-    return () => {
-      if (socket.current.readyState === 1) { // <-- This is important
-          socket.current.close();
-      }
-    }
-    
-  }, []);
+    socketRef.current.on('disconnect', () => {
+      console.log('Соединение закрыто');
+      setConnected(false);
+    });
 
-  useEffect(() => {
+    socketRef.current.on('error', (error) => {
+      console.error('Ошибка сокета:', error);
+      alert('ERROR');
+      setConnected(false);
+    });
+
     fetchGameData();
     fetchUserData();
   }, []);
 
+  
   const handleAnswerClick = () => {
     setAnswerLoading(true)
     const requestBody = {
@@ -109,9 +112,10 @@ const UserGamePage = () => {
         user: userData
       };
       console.log(message)
-      socket.current.send(JSON.stringify(message));
+      socketRef.current.emit('message', JSON.stringify(message));
       setAnswerLoading(false)
       setAnswerSubmitted(true)
+     
     })
     .catch(error => {
       console.error('Ошибка запроса:', error.message);

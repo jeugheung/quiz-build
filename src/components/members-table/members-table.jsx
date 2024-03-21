@@ -3,9 +3,10 @@ import { useSearchParams } from 'react-router-dom';
 import './members-table.css'
 import axios from 'axios';
 import {Hourglass} from 'react-loader-spinner'
+import { io } from 'socket.io-client';
 
 const MembersTable = () => {
-  const socket = useRef();
+  const socketRef = useRef();
   const [users, setUsers] = useState([]);
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(true)
@@ -35,22 +36,38 @@ const MembersTable = () => {
   }, []);
 
   useEffect(() => {
-    socket.current = new WebSocket(socketUrl);
-    socket.current.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      console.log('Message from USE EFFECT', message);
-      if (message.event === "connection") {
+    socketRef.current = io(socketUrl);
+
+    socketRef.current.on('connect', () => {
+      console.log('Подключение установлено');
+    });
+    socketRef.current.on('message', (message) => {
+      const parsedMessage = JSON.parse(message);
+      console.log('Message from USE EFFECT', parsedMessage);
+      if (parsedMessage.event === "connection") {
         console.log(',es')
-        if (!users.some(user => user.id === message.id)) {
-          setUsers(prevUsers => [...prevUsers, message]);
+        if (!users.some(user => user.id === parsedMessage.id)) {
+          setUsers(prevUsers => [...prevUsers, parsedMessage]);
         }
       }
-    };
+    });
+    
+    // socket.current = new WebSocket(socketUrl);
+    // socket.current.onmessage = (event) => {
+    //   const message = JSON.parse(event.data);
+    //   console.log('Message from USE EFFECT', message);
+    //   if (message.event === "connection") {
+    //     console.log(',es')
+    //     if (!users.some(user => user.id === message.id)) {
+    //       setUsers(prevUsers => [...prevUsers, message]);
+    //     }
+    //   }
+    // };
   
-    // Возвращаем функцию очистки, чтобы закрыть соединение при размонтировании компонента
-    return () => {
-      socket.current.close();
-    };
+    // // Возвращаем функцию очистки, чтобы закрыть соединение при размонтировании компонента
+    // return () => {
+    //   socket.current.close();
+    // };
   }, []); // Пустой массив зависимостей означает, что эффект будет выполнен только один раз при монтировании компонента
   
 

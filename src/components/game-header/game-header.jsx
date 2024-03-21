@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 
-const GameHeader = () => {
+const GameHeader = ({connectedStatus}) => {
   const [searchParams] = useSearchParams();
   const [gameData, setGameData] = useState();
   const roomId = searchParams.get("roomId");
@@ -38,6 +38,9 @@ const GameHeader = () => {
             {gameData ? gameData.game_step : "..."}
           </span>
         </div>
+        {connectedStatus && (
+          <div>Online </div>
+        )}
       </div>
     </div>
   );

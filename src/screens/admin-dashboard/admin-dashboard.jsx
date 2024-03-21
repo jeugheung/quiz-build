@@ -9,10 +9,11 @@ import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import {ThreeDots} from 'react-loader-spinner';
 import { Helmet } from 'react-helmet';
+import io from 'socket.io-client';
 
 const AdminDashboardPage = () => {
   const [gameQuestion, setGameQuestion] = useState(null);
-  const socket = useRef();
+  const socketRef = useRef(); // Web Socket
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const roomId = searchParams.get('roomId')
@@ -21,25 +22,42 @@ const AdminDashboardPage = () => {
   const [game, setGame] = useState()
   const apiUrl = process.env.REACT_APP_API
   const socketUrl = process.env.REACT_APP_SOCKET
+  // WebSocket 
+  const [connected, setConnected] = useState(false)
+
+
+  const fetchGameData = async () => {
+    try {
+        const response = await axios.get(`${apiUrl}/games/${roomId}`);
+        const gameData = response.data;
+        setGame(gameData)
+    } catch (error) {
+        console.error('Error fetching game data:', error);
+    }
+  };
+
 
   useEffect(() => {
-    socket.current = new WebSocket(socketUrl);
-    const fetchGameData = async () => {
-        try {
-            const response = await axios.get(`${apiUrl}/games/${roomId}`);
-            const gameData = response.data;
-            console.log('Game data:', gameData);
-            setGame(gameData)
-            // Здесь вы можете обновить состояние вашего компонента с полученными данными
-        } catch (error) {
-            console.error('Error fetching game data:', error);
-        }
-    };
+    socketRef.current = io(socketUrl);
+
+    socketRef.current.on('connect', () => {
+      setConnected(true);
+      console.log('Подключение установлено');
+    });
+
+    socketRef.current.on('disconnect', () => {
+      console.log('Соединение закрыто');
+      setConnected(false);
+    });
+
+    socketRef.current.on('error', (error) => {
+      console.error('Ошибка сокета:', error);
+      alert('ERROR');
+      setConnected(false);
+    });
+    
 
     fetchGameData();
-
-    // В случае, если вы хотите выполнить запрос только при загрузке компонента,
-    // передайте пустой массив зависимостей в useEffect.
   }, []);
 
   const handleStartGame = () => {
@@ -49,15 +67,14 @@ const AdminDashboardPage = () => {
     }
   
     setLoading(true);
-    // console.log('Selected question:', gameQuestion);
     if (gameQuestion) {
       const message = {
         event: "start_game",
         question: gameQuestion
       };
       console.log('messagee',message)
-      socket.current.send(JSON.stringify(message));
-      console.log(game)
+      // socket.current.send(JSON.stringify(message));
+
       const gameData = {
         current_question_ru: gameQuestion.question_ru,
         current_question_kz: gameQuestion.question_kz,
@@ -89,36 +106,26 @@ const AdminDashboardPage = () => {
             return response.json();
           })
           .then(data => {
-            console.log('Game data saved:', data);
+            // console.log('Game data saved:', data);
             
-            // Устанавливаем задержку в 1 секунду перед выполнением навигации
             setTimeout(() => {
-              setLoading(false);
+              setLoading(false)
+              socketRef.current.emit('message', JSON.stringify(message));
               navigate(`/admin-answers?roomId=${roomId}`);
             }, 500);
           })
           .catch(error => {
             console.error('Error saving game data:', error);
-            // Обработка ошибки сохранения данных
           });
       } catch (error) {
         console.error('Error saving game data:', error);
-        // Обработка ошибки сохранения данных
-      }
-    }
-
-    return () => {
-      if (socket.current.readyState === 1) { // <-- This is important
-          socket.current.close();
       }
     }
   };
 
   const handleEndGame = () => {
     const confirmed = window.confirm('Вы уверены, что хотите завершить игру?');
-
     if (confirmed) {
-      // Здесь добавьте код для перехода на следующую страницу
       navigate(`/winner-page?roomId=${roomId}`)
     }
   };
@@ -131,7 +138,7 @@ const AdminDashboardPage = () => {
       </Helmet>
       <Header />
       <div className='dashboard__container'>
-        <GameHeader />
+        <GameHeader connectedStatus={connected}/>
         <div className='dashboard__content'>
           <MembersTable/>
           <div className='dashboard__tableview'>

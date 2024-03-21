@@ -14,7 +14,7 @@ const QuestionTable = ({setGameQuestion}) => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`${apiUrl}/questions`);
-        console.log('All questions', response.data);
+        // console.log('All questions', response.data);
         setQuestions(response.data);
         setTimeout(() => {
           setLoading(false);

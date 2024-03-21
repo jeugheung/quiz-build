@@ -2,10 +2,10 @@ import React, {useState, useEffect, useRef} from 'react';
 // import './admin-dashboard.css'
 import './admin-answers.css'
 import Header from '../../components/header/header';
-import { useWebSocket } from '../../shared/WebSocketContext';
 import axios from 'axios';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {ThreeCircles, ThreeDots} from 'react-loader-spinner'
+import io from 'socket.io-client';
 
 const AdminAnswersPage = () => {
   const navigate = useNavigate();
@@ -22,9 +22,12 @@ const AdminAnswersPage = () => {
   const [incorrectLoading, setIncorrectLoading] = useState(false)
   const [endGameLoader, setEndGameLoader] = useState(false)
 
-  const socket = useRef();
+  const socketRef = useRef();
   const apiUrl = process.env.REACT_APP_API
   const socketUrl = process.env.REACT_APP_SOCKET
+
+  //WebSocket
+  const [connected, setConnected] = useState(false)
 
 
   const handleClick = (user_id, username) => {
@@ -103,7 +106,7 @@ const AdminAnswersPage = () => {
         winner: winner
       };
       console.log('messagee',message)
-      socket.current.send(JSON.stringify(message));
+      socketRef.current.emit('message', JSON.stringify(message));
       toggleAnswerStatus(gameData.question_id)
       
       
@@ -119,22 +122,31 @@ const AdminAnswersPage = () => {
   }, []);
 
   useEffect(() => {
-    socket.current = new WebSocket(socketUrl);
-    socket.current.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      console.log('from dash', message)
-      if (message.event === "user_answer") {
-        fetchGameData()
-      }
-    };
+    socketRef.current = io(socketUrl);
 
-    return () => {
-      if (socket.current.readyState === 1) { // <-- This is important
-          socket.current.close();
+    socketRef.current.on('connect', () => {
+      setConnected(true);
+      console.log('Подключение установлено');
+    });
+
+    socketRef.current.on('message', (message) => {
+      const parsedMessage = JSON.parse(message);
+      console.log('Message from USE EFFECT user game', parsedMessage);
+      if (parsedMessage.event === "user_answer") {
+        window.location.reload();
       }
-    }
-      
-      
+    });
+
+    socketRef.current.on('disconnect', () => {
+      console.log('Соединение закрыто');
+      setConnected(false);
+    });
+
+    socketRef.current.on('error', (error) => {
+      console.error('Ошибка сокета:', error);
+      alert('ERROR');
+      setConnected(false);
+    });
   }, []);
 
   const handleAllIncorrect = () => {
@@ -144,7 +156,7 @@ const AdminAnswersPage = () => {
       winner: winner
     };
     console.log('messagee',message)
-    socket.current.send(JSON.stringify(message));
+    // socket.current.send(JSON.stringify(message));
     toggleAnswerStatus(gameData.question_id)
   }
 
