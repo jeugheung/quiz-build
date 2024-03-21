@@ -23,15 +23,15 @@
 
 .user-sign__top-logo {
   width: 220px;
-  height: 78px;
-  object-fit: fill;
+  height: 68px;
+  object-fit: contain;
 }
 
 @media (min-width: 1150px) {
   .user-sign__top-logo {
     width: 220px;
-    height: 78px;
-    object-fit: fill;
+    height: 68px;
+    object-fit: contain;
   }
 }
 

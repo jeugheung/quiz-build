@@ -28,6 +28,9 @@
     display: flex;
     gap: 30px;
     align-items: center;
+    max-width: 250px;
+    width: 100%;
+    justify-content: center;
 }
 
 .game-header__item-title {
@@ -39,4 +42,27 @@
     font-size: 22px;
     font-weight: 700;
     color: rgba(39, 87, 161, 1);;
+}
+
+.connected-block {
+    display: flex;
+    gap: 30px
+    ;
+    align-items: center;
+    justify-content: end;
+    max-width: 250px;
+    width: 100%;
+}
+
+.connected-span {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.connected-block__value {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    font-weight: 700;
+    color: rgba(63, 161, 39, 1);
 }

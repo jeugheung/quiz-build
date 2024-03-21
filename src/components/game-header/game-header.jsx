@@ -2,6 +2,7 @@ import "./game-header.css";
 import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
+import {Vortex} from 'react-loader-spinner'
 
 const GameHeader = ({connectedStatus}) => {
   const [searchParams] = useSearchParams();
@@ -39,7 +40,21 @@ const GameHeader = ({connectedStatus}) => {
           </span>
         </div>
         {connectedStatus && (
-          <div>Online </div>
+          <div className="connected-block">
+            <span className="connected-span">Статус:</span>
+            <div className="connected-block__value">
+              <span>Online</span>
+              <Vortex
+                visible={true}
+                height="30"
+                width="30"
+                ariaLabel="vortex-loading"
+                wrapperStyle={{}}
+                wrapperClass="vortex-wrapper"
+                colors={['green', 'green', 'green', 'green', 'green', 'green']}
+              />
+            </div>
+          </div>
         )}
       </div>
     </div>

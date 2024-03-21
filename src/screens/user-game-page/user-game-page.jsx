@@ -3,7 +3,7 @@ import './user-game-page.css'
 import Header from '../../components/header/header';
 import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import {ThreeDots, RotatingSquare} from 'react-loader-spinner'
+import {ThreeDots, RotatingSquare, ThreeCircles} from 'react-loader-spinner'
 import { Helmet } from 'react-helmet';
 import io from 'socket.io-client';
 
@@ -13,6 +13,7 @@ const UserGamePage = () => {
   const roomId = searchParams.get('roomId');
 
   const [answerSubmitted, setAnswerSubmitted] = useState(false);
+  const [loading, setLoading] = useState(true)
   const socketRef = useRef();
   const [userData, setUserData] = useState(null);
   const [gameData, setGameData] = useState()
@@ -38,8 +39,10 @@ const UserGamePage = () => {
     try {
       const response = await axios.get(`${apiUrl}/games/${roomId}`);
       setGameData(response.data);
+      setLoading(false)
     } catch (error) {
       console.error('Error fetching game data:', error);
+      setLoading(false)
     }
   };
 
@@ -124,12 +127,28 @@ const UserGamePage = () => {
     });
   }
 
+  if (loading) {
+    return (
+      <div className='answers-loader-container'>
+        <ThreeCircles
+          visible={true}
+          height="100"
+          width="100"
+          color="#4fa94d"
+          ariaLabel="three-circles-loading"
+          wrapperStyle={{}}
+          wrapperClass=""
+        />
+      </div>
+    );
+  }
+
   return (
     <main className='user-game'>
       <Helmet>
         <title>{userData ? userData.username : "User..."}</title>
       </Helmet>
-      <Header />
+      <Header type={"user"}/>
       <div className='user-game__container'>
 
         <div className='user-game__question-container'>
@@ -138,7 +157,7 @@ const UserGamePage = () => {
             {userData ? (
                 <>
                   <div className='user-game__top-room'>
-                    <span className='user-game__room-title'>Номер комнаты {userData ? userData.room_id : '...'}</span>
+                    <span className='user-game__room-title'>Номер комнаты: {userData ? userData.room_id : '...'}</span>
                     <span className='user-game__room-title'>Текущий ход - {gameData ? gameData.game_step : 0}</span>
                   </div>
                   <div className='user-game__info_block'>
@@ -174,7 +193,7 @@ const UserGamePage = () => {
 
           </div>
 
-          {(gameData && gameData.game_step !== 0) ? (
+          {(gameData != null && gameData.game_step !== 0) ? (
             <div className='user-game__question'>
               <span className='user-game__points'>Вопрос на {gameData.points}</span>
               <div className='user-game__question-block'>

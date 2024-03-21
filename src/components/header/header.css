@@ -9,10 +9,41 @@
 
 .header__container {
   display: flex;
+  justify-content: space-between;
   width: 100%;
   height: 60px;
-  max-width: 1200px;
+  max-width: 1230px;
   /* background-color: aqua; */
   padding-top: 10px;
   padding-bottom: 10px;
+}
+
+.header__back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border: 0;
+  border-radius: 10px;
+  background-color: #2657A1;
+  color: white;
+  cursor: pointer;
+}
+
+.user-header-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 60px;
+ 
+  padding-top: 10px;
+  padding-bottom: 10px;
+  max-width: 1050px
+}
+
+.admin-header {
+  display: flex;
+  padding: 10px;
+  background-color: #2657A1;
+  color: whitesmoke;
 }
