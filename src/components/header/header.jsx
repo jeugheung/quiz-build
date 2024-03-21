@@ -1,6 +1,7 @@
 import React from "react";
 import "./header.css";
 import miniLogo from "../../assets/mini-logo.png";
+import formLogo from '../../assets/formLogo.png'
 import { useNavigate } from "react-router-dom";
 
 const Header = ({ type }) => {
@@ -17,7 +18,7 @@ const Header = ({ type }) => {
           type === "user" ? "user-header-container" : ""
         }`}
       >
-        <img src={miniLogo} alt=""></img>
+        <img src={formLogo} alt="" className="form-logo"></img>
         {type === "user" ? (
           <button className="header__back" onClick={handleNavigateToMainScreen}>
             Выбор комнаты
