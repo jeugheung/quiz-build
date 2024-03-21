@@ -63,7 +63,7 @@ const UserGamePage = () => {
       } else if (parsedMessage.event === 'end_step') {
         console.log(parsedMessage.winner);
         setGameData(null);
-        fetchGameData();
+        // fetchGameData();
         fetchUserData();
       }
     });
@@ -158,7 +158,7 @@ const UserGamePage = () => {
                 <>
                   <div className='user-game__top-room'>
                     <span className='user-game__room-title'>Номер комнаты: {userData ? userData.room_id : '...'}</span>
-                    <span className='user-game__room-title'>Текущий ход - {gameData ? gameData.game_step : 0}</span>
+                    <span className='user-game__room-title'>Текущий ход - {gameData ? gameData.game_step : '...'}</span>
                   </div>
                   <div className='user-game__info_block'>
                     <div className='user-game__info_item'>

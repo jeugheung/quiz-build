@@ -10,6 +10,7 @@ const MembersTable = () => {
   const [users, setUsers] = useState([]);
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(true)
+  const [reloader, setReloader] = useState(0);
   const roomId = searchParams.get('roomId')
   const apiUrl = process.env.REACT_APP_API
   const socketUrl = process.env.REACT_APP_SOCKET
@@ -41,14 +42,13 @@ const MembersTable = () => {
     socketRef.current.on('connect', () => {
       console.log('Подключение установлено');
     });
+
     socketRef.current.on('message', (message) => {
       const parsedMessage = JSON.parse(message);
       console.log('Message from USE EFFECT', parsedMessage);
       if (parsedMessage.event === "connection") {
         console.log(',es')
-        if (!users.some(user => user.id === parsedMessage.id)) {
-          setUsers(prevUsers => [...prevUsers, parsedMessage]);
-        }
+        window.location.reload()
       }
     });
     
@@ -72,7 +72,7 @@ const MembersTable = () => {
   
 
   return (
-    <div className='members-table'>
+    <div className='members-table' key={reloader}>
       <h2 className='members__main-title'>Участники</h2>
 
       
