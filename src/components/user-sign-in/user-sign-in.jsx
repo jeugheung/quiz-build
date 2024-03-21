@@ -48,7 +48,6 @@ const userConnection = () => {
       username,
       id: userId,
     };
-    socket.emit('message', JSON.stringify(message)); // Отправляем сообщение на сервер
 
     axios.post(`${apiUrl}/users`, {
       username,
@@ -60,6 +59,7 @@ const userConnection = () => {
       console.log('User created:', response.data);
       setTimeout(() => {
         setLoading(false);
+        socket.emit('message', JSON.stringify(message)); // Отправляем сообщение на сервер
         navigate(`/user-game?roomId=${roomId}&userId=${userId}`);
       }, 500);
     })
